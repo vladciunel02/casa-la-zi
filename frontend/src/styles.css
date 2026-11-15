@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+/* Design tokens from the Figma Make project (guidelines/Guidelines.md). */
+@theme {
+  --font-*: initial;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+
+  --color-*: initial;
+  --color-paper: #ffffff;
+  --color-desk: #f2f3f5;
+  --color-graphite: #1e2430;
+  --color-pencil: #5b6472;
+  --color-rule: #d9dde3;
+  --color-pen: #2340a8;
+  --color-pen-wash: #e8ecf8;
+
+  --radius-*: initial;
+  --radius-sm: 4px;
+
+  /* Mobile screen title (cashier): 22px. */
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.75rem;
+
+  --spacing-sidebar: 232px;
+  --container-content: 1200px;
+  --container-phone: 420px;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--color-desk);
+    color: var(--color-graphite);
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (min-width: 64rem) {
+    body {
+      font-size: 0.875rem;
+    }
+  }
+}
