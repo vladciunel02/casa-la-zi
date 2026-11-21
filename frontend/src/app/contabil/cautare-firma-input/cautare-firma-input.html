@@ -1,0 +1,17 @@
+<div role="search" class="relative w-64">
+  <ng-icon
+    name="phosphorMagnifyingGlass"
+    size="20"
+    aria-hidden="true"
+    class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-pencil"
+  />
+  <input
+    #cautareInput
+    type="search"
+    placeholder="Caută firmă"
+    aria-label="Caută firmă"
+    [value]="termen()"
+    (input)="termen.set(cautareInput.value)"
+    class="h-10 w-full rounded-sm border border-pencil bg-paper pr-3 pl-10 text-graphite outline-none placeholder:text-pencil focus-visible:border-pen focus-visible:ring-1 focus-visible:ring-pen"
+  />
+</div>

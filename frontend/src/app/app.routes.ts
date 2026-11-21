@@ -4,27 +4,26 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'contabil' },
   {
     path: 'contabil',
-    loadComponent: () =>
-      import('./contabil/layout/layout-contabil').then((m) => m.LayoutContabil),
+    loadComponent: () => import('./contabil/layout/layout-contabil').then((m) => m.LayoutContabil),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'zile-trimise' },
       {
         path: 'zile-trimise',
-        data: { cautareFirma: true },
         loadComponent: () =>
           import('./contabil/zile-trimise/zile-trimise').then((m) => m.ZileTrimise),
+      },
+      {
+        path: 'zile-trimise/:idZi',
+        loadComponent: () => import('./contabil/ziua-firmei/ziua-firmei').then((m) => m.ZiuaFirmei),
       },
       {
         path: 'firme',
         loadComponent: () => import('./contabil/firme/firme').then((m) => m.Firme),
       },
       {
-        path: 'export',
-        loadComponent: () => import('./contabil/export/export').then((m) => m.Export),
-      },
-      {
-        path: 'setari',
-        loadComponent: () => import('./contabil/setari/setari').then((m) => m.Setari),
+        path: 'firme/:idFirma',
+        loadComponent: () =>
+          import('./contabil/pagina-firmei/pagina-firmei').then((m) => m.PaginaFirmei),
       },
     ],
   },
@@ -38,22 +37,18 @@ export const routes: Routes = [
         loadComponent: () => import('./casier/acasa/acasa').then((m) => m.Acasa),
       },
       {
-        path: 'poze-si-verificare',
+        path: 'zi/:idZi',
         loadComponent: () =>
-          import('./casier/poze-si-verificare/poze-si-verificare').then(
-            (m) => m.PozeSiVerificare,
-          ),
+          import('./casier/poze-si-verificare/poze-si-verificare').then((m) => m.PozeSiVerificare),
       },
       {
-        path: 'confirmare',
-        loadComponent: () =>
-          import('./casier/confirmare/confirmare').then((m) => m.Confirmare),
+        path: 'confirmare/:idZi',
+        loadComponent: () => import('./casier/confirmare/confirmare').then((m) => m.Confirmare),
       },
     ],
   },
   {
     path: '**',
-    loadComponent: () =>
-      import('./pagina-negasita/pagina-negasita').then((m) => m.PaginaNegasita),
+    loadComponent: () => import('./pagina-negasita/pagina-negasita').then((m) => m.PaginaNegasita),
   },
 ];

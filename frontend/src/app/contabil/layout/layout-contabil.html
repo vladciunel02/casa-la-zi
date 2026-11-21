@@ -1,9 +1,14 @@
 <div class="min-h-screen bg-desk">
   <aside class="fixed inset-y-0 left-0 flex w-sidebar flex-col border-r border-rule bg-desk">
     <div class="flex h-16 items-center px-6">
-      <span class="text-base font-semibold text-graphite">Casa la Zi</span>
+      <a
+        routerLink="/contabil/zile-trimise"
+        class="rounded-sm text-base font-semibold text-graphite outline-none focus-visible:ring-2 focus-visible:ring-pen"
+      >
+        Casa la Zi
+      </a>
     </div>
-    <nav aria-label="Navigare principală" class="px-3 pt-4">
+    <nav aria-label="Navigare principală" class="px-3 pt-2">
       <ul class="flex flex-col gap-1">
         @for (item of items; track item.path) {
           <li>
@@ -26,35 +31,23 @@
         }
       </ul>
     </nav>
+
+    <div class="mx-3 mt-3 border-t border-rule pt-3">
+      <button
+        type="button"
+        class="flex h-10 w-full items-center gap-3 rounded-sm px-3 text-left font-medium text-pencil transition-colors outline-none hover:bg-pen-wash hover:text-graphite focus-visible:ring-2 focus-visible:ring-pen"
+      >
+        <ng-icon name="phosphorFileXls" size="20" aria-hidden="true" />
+        Export în Excel
+      </button>
+    </div>
+
+    <div class="mt-auto border-t border-rule px-6 py-4">
+      <p class="font-medium text-graphite">Andreea Popescu</p>
+      <p class="text-meta text-pencil">Contabil</p>
+    </div>
   </aside>
   <div class="pl-sidebar">
-    <header class="sticky top-0 z-10 border-b border-rule bg-desk">
-      <div class="mx-auto flex h-16 max-w-content items-center gap-6 px-10">
-        @if (arataCautarea()) {
-          <div role="search" class="relative w-80">
-            <ng-icon
-              name="phosphorMagnifyingGlass"
-              size="20"
-              aria-hidden="true"
-              class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-pencil"
-            />
-            <input
-              #cautareInput
-              type="search"
-              placeholder="Caută firmă"
-              aria-label="Caută firmă"
-              [value]="cautare.termen()"
-              (input)="cautare.termen.set(cautareInput.value)"
-              class="h-10 w-full rounded-sm border border-pencil bg-paper pr-3 pl-10 text-graphite outline-none placeholder:text-pencil focus-visible:border-pen focus-visible:ring-1 focus-visible:ring-pen"
-            />
-          </div>
-        }
-        <div class="ml-auto flex h-10 items-center gap-2 px-3 font-medium text-graphite">
-          Andreea Popescu, contabil
-          <ng-icon name="phosphorCaretDown" size="20" aria-hidden="true" class="text-pencil" />
-        </div>
-      </div>
-    </header>
     <main class="mx-auto max-w-content px-10 py-10">
       <router-outlet />
     </main>

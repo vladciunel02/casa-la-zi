@@ -14,10 +14,43 @@
   --color-pen: #2340a8;
   --color-pen-wash: #e8ecf8;
 
+  /* Status pairs: text color on its tint. */
+  --color-ok: #2f6b4f;
+  --color-ok-tint: #e6f0ea;
+  --color-warn: #8a5a00;
+  --color-warn-tint: #fbf1dc;
+  --color-error: #a3261f;
+  --color-error-tint: #fbe7e5;
+  --color-idle: #5b6472;
+  --color-idle-tint: #eef0f3;
+
   --radius-*: initial;
   --radius-sm: 4px;
 
-  /* Mobile screen title (cashier): 22px. */
+  /* Only floating menus and dialogs get a shadow. */
+  --shadow-*: initial;
+  --shadow-menu: 0 4px 12px rgb(30 36 48 / 0.12);
+
+  /* The only animation: the stamp press when a day is closed. */
+  --animate-*: initial;
+  --animate-stamp-press: stamp-press 180ms ease-out both;
+
+  @keyframes stamp-press {
+    from {
+      transform: scale(1.15);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.25rem;
+  --text-figure: 1.75rem;
+  --text-figure--line-height: 2.25rem;
+  /* Mobile scale (cashier): 15px secondary and 22px screen title. */
+  --text-secondary: 0.9375rem;
+  --text-secondary--line-height: 1.375rem;
   --text-title: 1.375rem;
   --text-title--line-height: 1.75rem;
 
