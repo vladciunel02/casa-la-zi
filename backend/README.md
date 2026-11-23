@@ -1,6 +1,6 @@
 # Backend
 
-This project uses Spring Boot version 3.5.16 and the Maven Wrapper.
+This project uses Spring Boot version 4.1.3 and the Maven Wrapper.
 
 ## Prerequisites
 
