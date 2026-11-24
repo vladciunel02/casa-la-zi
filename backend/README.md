@@ -27,7 +27,7 @@ Java sources are located in `src/main/java/ro/casalazi/`:
 - `registru/` contains register day and register row placeholders.
 - `extragere/` contains photo extraction placeholders.
 
-Each feature keeps its own controller, service, repository, entities and DTOs in its package.
+Each feature groups the placeholder classes currently defined for it in its own package.
 
 All placeholder classes are empty. Database access, authentication, AI integration and frontend integration are not implemented.
 
