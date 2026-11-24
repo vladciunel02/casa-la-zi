@@ -1,4 +1,4 @@
-package ro.casalazi.controller;
+package ro.casalazi.extragere;
 
 public class ExtragereController {
 }

@@ -23,11 +23,11 @@ No API endpoints are implemented yet. Browser requests return HTTP 404.
 Java sources are located in `src/main/java/ro/casalazi/`:
 
 - `CasaLaZiApplication.java` starts the application.
-- `controller/` contains controller placeholders.
-- `service/` contains business logic placeholders.
-- `repository/` contains data access placeholders.
-- `models/` contains register day, register row and company placeholders.
-- `dtos/` contains data transfer object placeholders.
+- `firme/` contains company placeholders (entity, DTO, controller, service, repository).
+- `registru/` contains register day and register row placeholders.
+- `extragere/` contains photo extraction placeholders.
+
+Each feature keeps its own controller, service, repository, entities and DTOs in its package.
 
 All placeholder classes are empty. Database access, authentication, AI integration and frontend integration are not implemented.
 

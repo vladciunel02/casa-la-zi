@@ -1,4 +1,4 @@
-package ro.casalazi.service;
+package ro.casalazi.registru;
 
 public class ZiRegistruService {
 }
