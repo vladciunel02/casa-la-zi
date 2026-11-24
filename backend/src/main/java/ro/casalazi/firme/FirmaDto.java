@@ -1,4 +1,14 @@
 package ro.casalazi.firme;
 
-public class FirmaDto {
+import java.time.Instant;
+import java.util.UUID;
+
+public record FirmaDto(
+        UUID id,
+        String denumire,
+        String cui,
+        String nrRegCom,
+        String adresa,
+        boolean platitorTva,
+        Instant creatLa) {
 }
