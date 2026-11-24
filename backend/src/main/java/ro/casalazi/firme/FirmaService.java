@@ -1,4 +1,4 @@
-package ro.casalazi.service;
+package ro.casalazi.firme;
 
 public class FirmaService {
 }

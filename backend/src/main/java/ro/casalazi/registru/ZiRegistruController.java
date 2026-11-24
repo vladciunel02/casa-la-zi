@@ -1,4 +1,4 @@
-package ro.casalazi.controller;
+package ro.casalazi.registru;
 
 public class ZiRegistruController {
 }

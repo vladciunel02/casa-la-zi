@@ -1,4 +1,4 @@
-package ro.casalazi.repository;
+package ro.casalazi.registru;
 
 public class RandRegistruRepository {
 }

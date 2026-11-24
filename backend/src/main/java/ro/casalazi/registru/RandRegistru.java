@@ -1,4 +1,4 @@
-package ro.casalazi.models;
+package ro.casalazi.registru;
 
 public class RandRegistru {
 }
