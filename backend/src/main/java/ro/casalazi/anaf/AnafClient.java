@@ -39,10 +39,16 @@ public class AnafClient implements RegistruAnaf {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(List.of(Map.of("cui", cod, "data", data)))
                     .exchange((request, response) -> {
-                        if (response.getStatusCode().value() != 200) {
+                        int status = response.getStatusCode().value();
+                        if (status != 200 && status != 404) {
                             throw new AnafIndisponibilException(null);
                         }
-                        return interpreteaza(response.bodyTo(JsonNode.class), cod);
+                        // anaf poate confirma un cui negasit printr-un raspuns json cu status 404.
+                        var rezultat = interpreteaza(response.bodyTo(JsonNode.class), cod);
+                        if (status == 404 && rezultat.isPresent()) {
+                            throw new AnafIndisponibilException(null);
+                        }
+                        return rezultat;
                     });
         } catch (RestClientException exception) {
             throw new AnafIndisponibilException(exception);
