@@ -27,7 +27,7 @@ public class Cabinet {
     private Instant creatLa;
 
     protected Cabinet() {
-        // Constructor necesar pentru JPA.
+        // constructor necesar pentru jpa.
     }
 
     public Cabinet(String denumire) {

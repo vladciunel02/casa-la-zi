@@ -55,7 +55,7 @@ public class Firma {
     private Instant creatLa;
 
     protected Firma() {
-        // Constructor necesar pentru JPA.
+        // constructor necesar pentru jpa.
     }
 
     public Firma(Cabinet cabinet, String denumire, String cui,

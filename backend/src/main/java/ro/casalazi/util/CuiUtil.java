@@ -9,7 +9,7 @@ public final class CuiUtil {
     private CuiUtil() {
     }
 
-    // Normalizarea nu validează formatul sau cifra de control.
+    // normalizarea nu valideaza formatul sau cifra de control.
     public static String normalizeaza(String cui) {
         String rezultat = Objects.requireNonNull(cui, "CUI-ul este obligatoriu.")
                 .replaceAll("\\s+", "");
@@ -19,7 +19,7 @@ public final class CuiUtil {
         return rezultat;
     }
 
-    /** Verifică un CUI deja normalizat; nu confirmă existența firmei în ANAF. */
+    /** verifica un cui deja normalizat; nu confirma existenta firmei in anaf. */
     public static boolean esteValid(String cui) {
         if (cui == null || !cui.matches("[0-9]{2,10}") || cui.matches("0+")) {
             return false;
@@ -28,7 +28,7 @@ public final class CuiUtil {
         int lungimeFaraControl = cui.length() - 1;
         int offsetCheie = CHEIE_CONTROL.length() - lungimeFaraControl;
         int suma = 0;
-        // Aliniere la dreapta: cifrele lipsă din stânga ar fi zerouri.
+        // aliniere la dreapta: cifrele lipsa din stanga ar fi zerouri.
         for (int i = 0; i < lungimeFaraControl; i++) {
             int cifra = cui.charAt(i) - '0';
             int pondere = CHEIE_CONTROL.charAt(offsetCheie + i) - '0';

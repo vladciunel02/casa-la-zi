@@ -58,7 +58,7 @@ public class Utilizator {
     private Instant creatLa;
 
     protected Utilizator() {
-        // Constructor necesar pentru JPA.
+        // constructor necesar pentru jpa.
     }
 
     public Utilizator(String email, String parolaHash, String nume,
@@ -94,7 +94,7 @@ public class Utilizator {
         return parolaHash;
     }
 
-    // Primește un hash deja calculat; entitatea nu criptează și nu verifică parole.
+    // primeste un hash deja calculat; entitatea nu cripteaza si nu verifica parole.
     public void setParolaHash(String parolaHash) {
         this.parolaHash = parolaHash;
     }

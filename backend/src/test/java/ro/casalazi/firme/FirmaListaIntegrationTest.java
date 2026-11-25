@@ -2,6 +2,8 @@ package ro.casalazi.firme;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +15,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import ro.casalazi.utilizatori.UtilizatorCurent;
+import ro.casalazi.anaf.RegistruAnaf;
+import ro.casalazi.anaf.AnafFirmaDto;
+import ro.casalazi.errors.anaf.AnafIndisponibilException;
+import java.util.Optional;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -61,6 +67,9 @@ class FirmaListaIntegrationTest {
 
     @MockitoBean
     private UtilizatorCurent utilizatorCurent;
+
+    @MockitoBean
+    private RegistruAnaf registru;
 
     @BeforeEach
     void seedIsolatedDatabase() {
@@ -145,5 +154,108 @@ class FirmaListaIntegrationTest {
         assertTrue(firma.path("platitorTva").isBoolean());
         assertTrue(firma.path("platitorTva").asBoolean());
         assertDoesNotThrow(() -> Instant.parse(firma.path("creatLa").asText()));
+    }
+
+    private HttpResponse<String> getDetalii(String id) throws Exception {
+        var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/api/firme/" + id))
+                .timeout(Duration.ofSeconds(10)).GET().build();
+        try (var client = HttpClient.newHttpClient()) {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    @Test
+    void returnsDetailsWithTheSameDtoAsTheList() throws Exception {
+        when(utilizatorCurent.cabinetId()).thenReturn(CABINET_A);
+        var response = getDetalii("f0000000-0000-0000-0000-000000000002");
+
+        assertEquals(200, response.statusCode());
+        assertTrue(response.headers().firstValue("Content-Type").orElse("").startsWith("application/json"));
+        assertEquals(getLista().get(0), mapper.readTree(response.body()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "f0000000-0000-0000-0000-000000000101",
+            "f0000000-0000-0000-0000-000000000003",
+            "f0000000-0000-0000-0000-000000000999"
+    })
+    void otherCabinetArchivedAndMissingCompaniesAllReturnTheSame404(String id) throws Exception {
+        when(utilizatorCurent.cabinetId()).thenReturn(CABINET_A);
+        var response = getDetalii(id);
+
+        assertProblem(response, 404, "Not Found", "Firma nu există.", "/api/firme/" + id);
+    }
+
+    @Test
+    void invalidUuidReturnsRomanianProblemDetail() throws Exception {
+        var response = getDetalii("abc");
+
+        assertProblem(response, 400, "Bad Request", "Id-ul firmei nu e valid.", "/api/firme/abc");
+    }
+
+    private void assertProblem(HttpResponse<String> response, int status,
+                               String title, String detail, String instance) {
+        assertEquals(status, response.statusCode());
+        assertTrue(response.headers().firstValue("Content-Type").orElse("")
+                .startsWith("application/problem+json"));
+        JsonNode problem = mapper.readTree(response.body());
+        assertEquals(status, problem.path("status").asInt());
+        assertEquals(title, problem.path("title").asText());
+        assertEquals(detail, problem.path("detail").asText());
+        assertEquals(instance, problem.path("instance").asText());
+        // Spring poate omite tipul implicit; absența lui înseamnă about:blank.
+        assertEquals("about:blank", problem.path("type").asText("about:blank"));
+        assertFalse(problem.has("trace"));
+    }
+
+
+    @Test
+    void creeazaEditeazaSiArhiveazaFirma() throws Exception {
+        when(utilizatorCurent.cabinetId()).thenReturn(CABINET_A);
+        String corp = """
+                {"cui":"RO 41982735","denumire":"Firma Noua","nrRegCom":"J16/1/2020",
+                 "adresa":"Adresa initiala","platitorTva":false}
+                """;
+        var creata = trimite("POST", "/api/firme", corp);
+        assertEquals(201, creata.statusCode(), creata.body());
+        assertEquals("41982735", mapper.readTree(creata.body()).path("cui").asText());
+        String cale = creata.headers().firstValue("Location").orElseThrow();
+        assertEquals(409, trimite("POST", "/api/firme", corp).statusCode());
+        var editata = trimite("PUT", cale, corp.replace("Adresa initiala", "Adresa noua"));
+        assertEquals(200, editata.statusCode(), editata.body());
+        assertEquals("Adresa noua", mapper.readTree(editata.body()).path("adresa").asText());
+        assertEquals(204, trimite("POST", cale + "/arhivare", "").statusCode());
+        assertEquals(404, trimite("GET", cale, "").statusCode());
+        assertEquals(409, trimite("POST", "/api/firme", corp).statusCode());
+        var invalid = trimite("POST", "/api/firme", "{}");
+        assertEquals(400, invalid.statusCode());
+        assertTrue(mapper.readTree(invalid.body()).path("erori").has("platitorTva"));
+    }
+
+    @Test
+    void cautaInAnafDupaValidareaCuiuluiSiACabinetului() throws Exception {
+        when(utilizatorCurent.cabinetId()).thenReturn(CABINET_A);
+        assertEquals(400, trimite("GET", "/api/anaf/12345678", "").statusCode());
+        assertEquals(409, trimite("GET", "/api/anaf/18452300", "").statusCode());
+        org.mockito.Mockito.verifyNoInteractions(registru);
+        when(registru.cauta("41982735"))
+                .thenReturn(Optional.of(new AnafFirmaDto("41982735", "Firma ANAF",
+                        "J16/1/2020", "Adresa", true, false)))
+                .thenReturn(Optional.empty())
+                .thenThrow(new AnafIndisponibilException(null));
+        String cale = "/api/anaf/RO41982735";
+        assertEquals(200, trimite("GET", cale, "").statusCode());
+        assertEquals(404, trimite("GET", cale, "").statusCode());
+        assertEquals(503, trimite("GET", cale, "").statusCode());
+    }
+
+    private HttpResponse<String> trimite(String metoda, String cale, String corp) throws Exception {
+        var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + cale))
+                .header("Content-Type", "application/json").timeout(Duration.ofSeconds(10))
+                .method(metoda, HttpRequest.BodyPublishers.ofString(corp)).build();
+        try (var client = HttpClient.newHttpClient()) {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
     }
 }

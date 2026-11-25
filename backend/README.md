@@ -34,7 +34,7 @@ Java sources are located in `src/main/java/ro/casalazi/`:
 
 Each feature groups the placeholder classes currently defined for it in its own package.
 
-The entities are mapped to the existing V1 schema. Company listing is implemented. Creation, editing, archiving, authentication, AI integration and frontend integration are not implemented.
+The entities are mapped to the existing V1 schema. The company API supports listing, details, creation, editing, and archiving. The ANAF lookup can populate the form before creation.
 
 ## Building
 
@@ -61,3 +61,7 @@ Company listing integration tests require Docker. Testcontainers starts a separa
 ```bash
 curl http://127.0.0.1:8081/api/firme
 ```
+
+`GET /api/firme/{id}` returns an active company from the current cabinet. Missing, archived and other-cabinet companies all return the same 404 ProblemDetail. Invalid UUIDs return 400. Error details are in Romanian. Integration tests cover both endpoints and their error responses.
+
+See `http/firme.http` for examples of all six endpoints. API exceptions are grouped by feature under `errors/`.

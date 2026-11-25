@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/** Identitate demonstrativă până la implementarea autentificării. */
+/** identitate demonstrativa pana la implementarea autentificarii. */
 @Component
 public class UtilizatorCurent {
 
