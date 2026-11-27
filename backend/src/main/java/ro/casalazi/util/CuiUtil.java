@@ -21,7 +21,7 @@ public final class CuiUtil {
 
     /** verifica un cui deja normalizat; nu confirma existenta firmei in anaf. */
     public static boolean esteValid(String cui) {
-        if (cui == null || !cui.matches("[0-9]{2,10}") || cui.matches("0+")) {
+        if (cui == null || !cui.matches("[1-9][0-9]{1,9}")) {
             return false;
         }
 

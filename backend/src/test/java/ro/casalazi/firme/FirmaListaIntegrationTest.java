@@ -250,6 +250,18 @@ class FirmaListaIntegrationTest {
         assertEquals(503, trimite("GET", cale, "").statusCode());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"POST", "PUT"})
+    void respingeCorpulJsonNull(String metoda) throws Exception {
+        String cale = metoda.equals("POST") ? "/api/firme"
+                : "/api/firme/f0000000-0000-0000-0000-000000000001";
+        var raspuns = trimite(metoda, cale, "null");
+
+        assertProblem(raspuns, 400, "Bad Request", "Datele firmei nu sunt complete.", cale);
+        assertEquals("Corpul cererii este obligatoriu.",
+                mapper.readTree(raspuns.body()).path("erori").path("corp").asString());
+    }
+
     private HttpResponse<String> trimite(String metoda, String cale, String corp) throws Exception {
         var request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + cale))
                 .header("Content-Type", "application/json").timeout(Duration.ofSeconds(10))

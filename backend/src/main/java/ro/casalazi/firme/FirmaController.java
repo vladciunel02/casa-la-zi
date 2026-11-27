@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ro.casalazi.errors.firme.DateFirmaInvalideException;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /** expune operatiile pe firme prin http si transmite cererile catre service. */
@@ -35,14 +37,16 @@ public class FirmaController {
     }
 
     @PostMapping
-    public ResponseEntity<FirmaDto> adauga(@RequestBody FirmaRequest cerere) {
+    public ResponseEntity<FirmaDto> adauga(@RequestBody(required = false) FirmaRequest cerere) {
+        verificaCorp(cerere);
         FirmaDto firma = service.adauga(cerere);
         // location indica ruta de la care clientul poate citi firma creata.
         return ResponseEntity.created(URI.create("/api/firme/" + firma.id())).body(firma);
     }
 
     @PutMapping("/{id}")
-    public FirmaDto editeaza(@PathVariable("id") UUID id, @RequestBody FirmaRequest cerere) {
+    public FirmaDto editeaza(@PathVariable("id") UUID id, @RequestBody(required = false) FirmaRequest cerere) {
+        verificaCorp(cerere);
         return service.editeaza(id, cerere);
     }
 
@@ -50,5 +54,11 @@ public class FirmaController {
     public ResponseEntity<Void> arhiveaza(@PathVariable("id") UUID id) {
         service.arhiveaza(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private void verificaCorp(FirmaRequest cerere) {
+        if (cerere == null) {
+            throw new DateFirmaInvalideException(Map.of("corp", "Corpul cererii este obligatoriu."));
+        }
     }
 }

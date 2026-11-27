@@ -70,4 +70,10 @@ class CuiUtilTest {
         assertEquals("", CuiUtil.normalizeaza(" RO "));
         assertFalse(CuiUtil.esteValid(CuiUtil.normalizeaza(" RO ")));
     }
+    @ParameterizedTest
+    @ValueSource(strings = {"01590082", "ro 01590082"})
+    void rejectsLeadingZeroEvenWhenChecksumMatches(String input) {
+        assertEquals("01590082", CuiUtil.normalizeaza(input));
+        assertFalse(CuiUtil.esteValid(CuiUtil.normalizeaza(input)));
+    }
 }

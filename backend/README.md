@@ -54,7 +54,7 @@ From the `backend` directory, run:
 ./mvnw test
 ```
 
-The unit tests run without Spring, Docker or external services. Current-user tests use a mocked repository to check the active accountant, role and cabinet. They cover CUI normalization and checksum validation, plus email normalization. Call `CuiUtil.normalizeaza` before `CuiUtil.esteValid`: the validator accepts only 2–10 ASCII digits and rejects an all-zero value. A valid checksum does not confirm that a company exists in ANAF. Email normalization does not validate the email format.
+The unit tests run without Spring, Docker or external services. Current-user tests use a mocked repository to check the active accountant, role and cabinet. They cover CUI normalization and checksum validation, plus email normalization. Call `CuiUtil.normalizeaza` before `CuiUtil.esteValid`: the validator accepts only 2–10 ASCII digits with a non-zero first digit and a valid checksum. A valid checksum does not confirm that a company exists in ANAF. Email normalization does not validate the email format.
 
 Company listing integration tests require Docker. Testcontainers starts a separate PostgreSQL 17 database and Flyway applies V1 there. The tests do not use or reset the development database. They verify cabinet isolation, archived-company exclusion, sorting, empty lists and response fields. The current accountant is mocked for these integration tests.
 
