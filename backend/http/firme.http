@@ -1,0 +1,34 @@
+### Lista firmelor active ale cabinetului curent (profil dev)
+GET http://127.0.0.1:8081/api/firme
+Accept: application/json
+
+### Detaliile unei firme active din cabinetul A
+GET http://127.0.0.1:8081/api/firme/f0000000-0000-0000-0000-000000000001
+Accept: application/json
+
+### Firmă din alt cabinet: 404
+GET http://127.0.0.1:8081/api/firme/f0000000-0000-0000-0000-000000000101
+
+### Firmă arhivată: 404
+GET http://127.0.0.1:8081/api/firme/f0000000-0000-0000-0000-000000000009
+
+### UUID invalid: 400
+GET http://127.0.0.1:8081/api/firme/abc
+
+### Căutare ANAF înainte de adăugare
+GET http://127.0.0.1:8081/api/anaf/RO41982735
+
+### Adaugă o firmă
+POST http://127.0.0.1:8081/api/firme
+Content-Type: application/json
+
+{"cui":"RO41982735","denumire":"Firmă exemplu","nrRegCom":"J16/1/2020","adresa":"Adresă exemplu","platitorTva":true}
+
+### Editează o firmă
+PUT http://127.0.0.1:8081/api/firme/f0000000-0000-0000-0000-000000000001
+Content-Type: application/json
+
+{"cui":"18452300","denumire":"Alimentara Florea SRL","nrRegCom":"J16/412/2016","adresa":"Adresă actualizată","platitorTva":true}
+
+### Arhivează o firmă (modifică baza locală)
+POST http://127.0.0.1:8081/api/firme/f0000000-0000-0000-0000-000000000001/arhivare
