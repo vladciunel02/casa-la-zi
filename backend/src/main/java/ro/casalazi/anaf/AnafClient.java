@@ -2,6 +2,7 @@ package ro.casalazi.anaf;
 
 import ro.casalazi.errors.anaf.AnafIndisponibilException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -21,11 +22,20 @@ import java.util.Optional;
 public class AnafClient implements RegistruAnaf {
     private final RestClient client;
 
+    @Autowired
     public AnafClient() {
+        this(clientHttp());
+    }
+
+    AnafClient(RestClient client) {
+        this.client = client;
+    }
+
+    private static RestClient clientHttp() {
         var http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
         var factory = new JdkClientHttpRequestFactory(http);
         factory.setReadTimeout(Duration.ofSeconds(10));
-        client = RestClient.builder().baseUrl("https://webservicesp.anaf.ro")
+        return RestClient.builder().baseUrl("https://webservicesp.anaf.ro")
                 .requestFactory(factory).build();
     }
 

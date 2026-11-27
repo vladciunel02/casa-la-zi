@@ -36,6 +36,18 @@ Each feature groups the placeholder classes currently defined for it in its own 
 
 The entities are mapped to the existing V1 schema. The company API supports listing, details, creation, editing, and archiving. The ANAF lookup can populate the form before creation.
 
+## ANAF lookups
+
+The lookup keeps an in-memory cache keyed by normalized CUI. Concurrent requests for the same CUI share one lookup. Entries refresh on demand after expiry. Only validated results and confirmed not-found responses are cached. Timeouts, HTML responses and other failures return HTTP 503.
+
+| Spring property | Default |
+| --- | --- |
+| `casalazi.anaf.cache.ttl-gasit-secunde` | 900 seconds |
+| `casalazi.anaf.cache.ttl-negasit-secunde` | 60 seconds |
+| `casalazi.anaf.cache.capacitate` | 1,000 entries |
+
+Expired entries are removed as needed. If the cache fills with fresh entries, additional lookups still return their results. The cache and rate limiter are local to each backend process. The backend waits at least one second after each ANAF call finishes before allowing another. A cache miss during that interval or during another CUI lookup returns HTTP 503 with `Retry-After: 1`. A cached response remains available during that interval.
+
 ## Building
 
 To build the project, run:

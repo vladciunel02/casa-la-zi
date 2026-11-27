@@ -18,6 +18,7 @@ import ro.casalazi.utilizatori.UtilizatorCurent;
 import ro.casalazi.anaf.RegistruAnaf;
 import ro.casalazi.anaf.AnafFirmaDto;
 import ro.casalazi.errors.anaf.AnafIndisponibilException;
+import ro.casalazi.errors.anaf.AnafLimitaException;
 import java.util.Optional;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -260,6 +261,17 @@ class FirmaListaIntegrationTest {
         assertProblem(raspuns, 400, "Bad Request", "Datele firmei nu sunt complete.", cale);
         assertEquals("Corpul cererii este obligatoriu.",
                 mapper.readTree(raspuns.body()).path("erori").path("corp").asString());
+    }
+
+    @Test
+    void semnaleazaLimitaAnafCuRetryAfter() throws Exception {
+        when(utilizatorCurent.cabinetId()).thenReturn(CABINET_A);
+        when(registru.cauta("41982735")).thenThrow(new AnafLimitaException());
+
+        var raspuns = trimite("GET", "/api/anaf/41982735", "");
+
+        assertEquals(503, raspuns.statusCode());
+        assertEquals("1", raspuns.headers().firstValue("Retry-After").orElseThrow());
     }
 
     private HttpResponse<String> trimite(String metoda, String cale, String corp) throws Exception {

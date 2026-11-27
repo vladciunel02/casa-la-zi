@@ -17,6 +17,7 @@ import ro.casalazi.errors.firme.CuiInvalidException;
 import ro.casalazi.errors.firme.DateFirmaInvalideException;
 import ro.casalazi.errors.anaf.AnafFirmaNegasitaException;
 import ro.casalazi.errors.anaf.AnafIndisponibilException;
+import ro.casalazi.errors.anaf.AnafLimitaException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.util.UUID;
@@ -55,6 +56,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AnafIndisponibilException.class)
     public ProblemDetail anafIndisponibil(AnafIndisponibilException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
+    @ExceptionHandler(AnafLimitaException.class)
+    public ResponseEntity<ProblemDetail> anafLimita(AnafLimitaException exception) {
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .header(HttpHeaders.RETRY_AFTER, "1")
+                .body(problem);
     }
 
     @Override
